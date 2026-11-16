@@ -1,0 +1,1345 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
+<title>Digit Analysis Pro</title>
+
+<style>
+:root {
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --bg:#f3f6fb;
+  --white:#ffffff;
+  --text:#172033;
+  --muted:#718096;
+  --green:#16a34a;
+  --red:#dc2626;
+  --border:#e5eaf2;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+.container {
+  width:100%;
+  max-width:850px;
+  margin:auto;
+  padding:16px;
+}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:18px;
+}
+.brand {
+  font-size:21px;
+  font-weight:800;
+  color:var(--blue);
+}
+.subtitle {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+.status {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 12px;
+  border-radius:30px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-size:11px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+.status.connected {
+  background:#dcfce7;
+  color:#15803d;
+}
+.status-dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:currentColor;
+}
+.card {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:17px;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px rgba(15,23,42,.035);
+}
+.card-title {
+  font-size:15px;
+  font-weight:750;
+  margin-bottom:16px;
+}
+.controls-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.field label {
+  display:block;
+  color:#526078;
+  font-size:12px;
+  font-weight:650;
+  margin-bottom:8px;
+}
+select {
+  width:100%;
+  height:43px;
+  padding:0 11px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:white;
+  color:var(--text);
+  outline:none;
+  font-size:13px;
+}
+select:focus {border-color:var(--blue)}
+.switch-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:43px;
+}
+.switch {
+  position:relative;
+  width:43px;
+  height:24px;
+  flex-shrink:0;
+}
+.switch input {display:none}
+.slider {
+  position:absolute;
+  inset:0;
+  background:#cbd5e1;
+  border-radius:30px;
+  cursor:pointer;
+  transition:.25s;
+}
+.slider:before {
+  content:"";
+  position:absolute;
+  width:18px;
+  height:18px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.25s;
+}
+.switch input:checked + .slider {background:var(--blue)}
+.switch input:checked + .slider:before {
+  transform:translateX(19px);
+}
+.market-info {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.info-box {
+  background:#f8fafc;
+  padding:15px;
+  border-radius:11px;
+  min-width:0;
+}
+.info-label {
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:9px;
+}
+.info-value {
+  font-size:19px;
+  font-weight:800;
+  overflow-wrap:anywhere;
+}
+.digit-pill {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#dbeafe;
+  color:var(--blue);
+  border-radius:9px;
+  min-width:40px;
+  padding:6px 13px;
+  font-size:21px;
+  font-weight:850;
+}
+.tabs {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-bottom:17px;
+}
+.tab {
+  border:1px solid var(--border);
+  padding:12px 5px;
+  border-radius:9px;
+  background:white;
+  font-size:12px;
+  font-weight:700;
+  color:#64748b;
+  cursor:pointer;
+}
+.tab.active {
+  background:#eff6ff;
+  color:var(--blue);
+  border-color:#93c5fd;
+}
+.primary-btn {
+  width:100%;
+  padding:15px;
+  background:var(--blue);
+  color:white;
+  border:0;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+}
+.primary-btn:active {background:var(--blue-dark)}
+.primary-btn:disabled {opacity:.6;cursor:wait}
+.analysis-result {
+  display:none;
+  text-align:center;
+  padding-top:23px;
+}
+.result-label {
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.prediction {
+  font-size:30px;
+  font-weight:900;
+  color:var(--blue);
+  margin:8px 0 15px;
+  overflow-wrap:anywhere;
+}
+.confidence {
+  font-size:29px;
+  font-weight:900;
+  color:var(--green);
+}
+.confidence-caption {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.progress-bar {
+  height:10px;
+  width:100%;
+  background:#e8edf5;
+  border-radius:20px;
+  overflow:hidden;
+  margin:13px 0;
+}
+.progress-fill {
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#2563eb,#16a34a);
+  border-radius:20px;
+  transition:width .5s;
+}
+.explanation {
+  background:#f8fafc;
+  padding:13px;
+  text-align:left;
+  border-radius:10px;
+  color:#526078;
+  font-size:12px;
+  line-height:1.7;
+  margin-top:15px;
+}
+.ring-wrap {
+  display:none;
+  justify-content:center;
+  padding:20px 0;
+}
+.ring {
+  width:95px;
+  height:95px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:conic-gradient(var(--blue) 0deg,#e5eaf2 0deg);
+  position:relative;
+}
+.ring:before {
+  content:"";
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  background:white;
+}
+.ring span {
+  position:relative;
+  font-size:19px;
+  font-weight:850;
+  color:var(--blue);
+}
+.digit-grid {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:9px;
+}
+.digit-cell {
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 4px;
+  text-align:center;
+}
+.digit-number {
+  font-size:19px;
+  font-weight:850;
+}
+.digit-percent {
+  margin-top:7px;
+  font-size:12px;
+  color:#64748b;
+  font-weight:700;
+}
+.highest {
+  background:#fee2e2;
+  border-color:#fecaca;
+  color:#b91c1c;
+}
+.lowest {
+  background:#dcfce7;
+  border-color:#bbf7d0;
+  color:#15803d;
+}
+.footer {
+  text-align:center;
+  font-size:11px;
+  color:var(--muted);
+  padding:15px 5px;
+}
+.notice {
+  font-size:11px;
+  line-height:1.6;
+  color:#64748b;
+  margin-top:10px;
+}
+@media(max-width:480px) {
+  .container {padding:11px}
+  .card {padding:14px}
+  .brand {font-size:18px}
+  .controls-grid {gap:12px}
+  .tabs {gap:5px}
+  .tab {font-size:10px;padding:11px 3px}
+  .digit-grid {gap:6px}
+  .digit-cell {padding:11px 2px}
+  .digit-number {font-size:17px}
+  .digit-percent {font-size:11px}
+  .prediction {font-size:26px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <div class="brand">Digit Analysis Pro</div>
+    <div class="subtitle">Live Deriv Market Scanner</div>
+  </div>
+  <div class="status" id="connectionStatus">
+    <span class="status-dot"></span>
+    <span id="statusText">Connecting</span>
+  </div>
+</header>
+
+<!-- SETTINGS -->
+<section class="card">
+  <div class="card-title">Scanner Controls</div>
+
+  <div class="controls-grid">
+
+    <div class="field">
+      <label>Volatility Tracking</label>
+      <div class="switch-row">
+        <span id="trackingText">ON</span>
+        <label class="switch">
+          <input type="checkbox" id="trackingSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Sound Alert</label>
+      <div class="switch-row">
+        <span id="soundText">OFF</span>
+        <label class="switch">
+          <input type="checkbox" id="soundSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Volatility Index</label>
+      <select id="marketSelect">
+        <option value="1HZ10V">Volatility 10 (1s)</option>
+        <option value="R_10">Volatility 10</option>
+        <option value="1HZ25V" selected>Volatility 25 (1s)</option>
+        <option value="R_25">Volatility 25</option>
+        <option value="1HZ50V">Volatility 50 (1s)</option>
+        <option value="R_50">Volatility 50</option>
+        <option value="1HZ75V">Volatility 75 (1s)</option>
+        <option value="R_75">Volatility 75</option>
+        <option value="1HZ100V">Volatility 100 (1s)</option>
+        <option value="R_100">Volatility 100</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Sample Window</label>
+      <select id="sampleSelect">
+        <option value="50">50 Ticks</option>
+        <option value="100" selected>100 Ticks</option>
+        <option value="250">250 Ticks</option>
+        <option value="500">500 Ticks</option>
+      </select>
+    </div>
+
+  </div>
+</section>
+
+<!-- LIVE PRICE -->
+<section class="card">
+  <div class="card-title">Live Market Information</div>
+  <div class="market-info">
+    <div class="info-box">
+      <div class="info-label">Live Spot Price</div>
+      <div class="info-value" id="spotPrice">---</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">Last Digit</div>
+      <div><span class="digit-pill" id="lastDigit">-</span></div>
+    </div>
+  </div>
+  <div class="notice" id="tickStatus">Waiting for market data...</div>
+</section>
+
+<!-- ANALYSIS -->
+<section class="card">
+  <div class="card-title">Digit Analysis Engine</div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="differs">Matches / Differs</button>
+    <button class="tab" data-mode="evenodd">Even / Odd</button>
+    <button class="tab" data-mode="overunder">Over / Under</button>
+  </div>
+
+  <button class="primary-btn" id="analyzeBtn">Start Analysis</button>
+
+  <div class="ring-wrap" id="ringWrap">
+    <div class="ring" id="progressRing">
+      <span id="progressText">0%</span>
+    </div>
+  </div>
+
+  <div class="analysis-result" id="analysisResult">
+    <div class="result-label">STATISTICAL RECOMMENDATION</div>
+    <div class="prediction" id="prediction">---</div>
+
+    <div class="confidence" id="confidence">0%</div>
+    <div class="confidence-caption">Calculated Confidence Score</div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="confidenceBar"></div>
+    </div>
+
+    <div class="explanation" id="explanation">
+      Analysis explanation will appear here.
+    </div>
+  </div>
+</section>
+
+<!-- DIGIT GRID -->
+<section class="card">
+  <div class="card-title">Live Digit Frequency (0–9)</div>
+
+  <div class="digit-grid" id="digitGrid">
+  </div>
+
+  <div class="notice" id="gridStatus">
+    Collecting tick data...
+  </div>
+</section>
+
+<div class="footer">
+  Digit Analysis Pro | Live Deriv Scanner<br>
+  Statistical analysis only. No guaranteed predictions.
+</div>
+
+</div>
+
+<script>
+"use strict";
+
+/* =====================================
+   CONFIGURATION
+===================================== */
+
+const APP_ID = 1089;
+
+const WS_URL =
+  `wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`;
+
+const MAX_HISTORY = 500;
+
+const $ = id => document.getElementById(id);
+
+/* =====================================
+   APPLICATION STATE
+===================================== */
+
+let socket = null;
+let reconnectTimer = null;
+let pingTimer = null;
+
+let reconnectDelay = 1000;
+let manuallyClosed = false;
+
+let currentMarket = $("marketSelect").value;
+let currentMode = "differs";
+
+let ticks = [];
+let pipSize = 2;
+let latestQuote = null;
+let latestDigit = null;
+
+let trackingEnabled = true;
+let soundEnabled = false;
+
+let analysisRunning = false;
+let analysisGeneration = 0;
+
+let pendingSubscription = false;
+let lastAnalysisSound = false;
+
+let audioContext = null;
+
+/* =====================================
+   UI INITIALIZATION
+===================================== */
+
+function createDigitGrid() {
+  $("digitGrid").innerHTML = "";
+
+  for (let i = 0; i <= 9; i++) {
+    const cell = document.createElement("div");
+    cell.className = "digit-cell";
+    cell.id = `digit-${i}`;
+
+    cell.innerHTML = `
+      <div class="digit-number">${i}</div>
+      <div class="digit-percent" id="percent-${i}">0.00%</div>
+    `;
+
+    $("digitGrid").appendChild(cell);
+  }
+}
+
+createDigitGrid();
+
+function setConnectionStatus(connected, text) {
+  const status = $("connectionStatus");
+
+  status.classList.toggle("connected", connected);
+  $("statusText").textContent = text;
+}
+
+function setTrackingUI() {
+  trackingEnabled = $("trackingSwitch").checked;
+  $("trackingText").textContent =
+    trackingEnabled ? "ON" : "OFF";
+
+  updateDigitGrid();
+}
+
+function setSoundUI() {
+  soundEnabled = $("soundSwitch").checked;
+  $("soundText").textContent =
+    soundEnabled ? "ON" : "OFF";
+}
+
+$("trackingSwitch").addEventListener("change", setTrackingUI);
+$("soundSwitch").addEventListener("change", setSoundUI);
+
+/* =====================================
+   EXACT LAST DIGIT EXTRACTION
+===================================== */
+
+function extractLastDigit(quote, precision) {
+  const formatted = Number(quote).toFixed(precision);
+
+  const digits = formatted.replace(/\D/g, "");
+
+  if (!digits.length) return null;
+
+  return Number(digits.charAt(digits.length - 1));
+}
+
+/* =====================================
+   WEBSOCKET CONNECTION
+===================================== */
+
+function connect() {
+  clearTimeout(reconnectTimer);
+  clearInterval(pingTimer);
+
+  if (socket) {
+    try {
+      socket.close();
+    } catch (e) {}
+  }
+
+  setConnectionStatus(false, "Connecting");
+
+  let ws;
+
+  try {
+    ws = new WebSocket(WS_URL);
+  } catch (error) {
+    scheduleReconnect();
+    return;
+  }
+
+  socket = ws;
+
+  ws.onopen = function() {
+    if (socket !== ws) return;
+
+    reconnectDelay = 1000;
+
+    setConnectionStatus(true, "Live Connected");
+
+    // Keep the WebSocket alive.
+    pingTimer = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ping:1}));
+      }
+    }, 12000);
+
+    requestMarketHistory();
+  };
+
+  ws.onmessage = function(event) {
+    if (socket !== ws) return;
+
+    let data;
+
+    try {
+      data = JSON.parse(event.data);
+    } catch (error) {
+      return;
+    }
+
+    handleMessage(data);
+  };
+
+  ws.onerror = function() {
+    if (socket === ws) {
+      setConnectionStatus(false, "Connection Error");
+    }
+  };
+
+  ws.onclose = function() {
+    if (socket !== ws) return;
+
+    clearInterval(pingTimer);
+
+    setConnectionStatus(false, "Disconnected");
+
+    if (!manuallyClosed) {
+      scheduleReconnect();
+    }
+  };
+}
+
+function scheduleReconnect() {
+  clearTimeout(reconnectTimer);
+
+  setConnectionStatus(false, "Reconnecting");
+
+  reconnectTimer = setTimeout(() => {
+    if (!manuallyClosed) connect();
+  }, reconnectDelay);
+
+  reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+}
+
+/* =====================================
+   MARKET HISTORY REQUEST
+===================================== */
+
+function requestMarketHistory() {
+  if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+  pendingSubscription = true;
+
+  socket.send(JSON.stringify({
+    ticks_history: currentMarket,
+    count: MAX_HISTORY,
+    end: "latest",
+    style: "ticks",
+    subscribe: 1
+  }));
+}
+
+/* =====================================
+   WEBSOCKET MESSAGE HANDLER
+===================================== */
+
+function handleMessage(data) {
+
+  if (data.error) {
+    console.error("Deriv API error:", data.error.message);
+
+    $("tickStatus").textContent =
+      "API error: " + data.error.message;
+
+    return;
+  }
+
+  // Historical data response
+  if (data.msg_type === "history" || data.history) {
+    if (data.history) {
+      processHistory(data);
+    }
+    return;
+  }
+
+  // Live tick response
+  if (data.msg_type === "tick" && data.tick) {
+    processLiveTick(data.tick);
+    return;
+  }
+}
+
+/* =====================================
+   PROCESS HISTORICAL TICKS
+===================================== */
+
+function processHistory(data) {
+  if (!data.history || !data.history.prices) return;
+
+  if (data.echo_req &&
+      data.echo_req.ticks_history &&
+      data.echo_req.ticks_history !== currentMarket) {
+    return;
+  }
+
+  const prices = data.history.prices;
+
+  if (typeof data.history.pip_size === "number") {
+    pipSize = data.history.pip_size;
+  }
+
+  if (typeof data.tick?.pip_size === "number") {
+    pipSize = data.tick.pip_size;
+  }
+
+  ticks = [];
+
+  prices.forEach(price => {
+    const digit = extractLastDigit(price, pipSize);
+
+    if (digit !== null) {
+      ticks.push(digit);
+    }
+  });
+
+  ticks = ticks.slice(-MAX_HISTORY);
+
+  if (ticks.length) {
+    latestQuote = prices[prices.length - 1];
+
+    latestDigit = extractLastDigit(latestQuote, pipSize);
+
+    updatePriceDisplay();
+  }
+
+  pendingSubscription = false;
+
+  updateDigitGrid();
+
+  $("tickStatus").textContent =
+    `${ticks.length} historical ticks loaded. Live monitoring active.`;
+
+  invalidateAnalysis();
+}
+
+/* =====================================
+   PROCESS LIVE TICK
+===================================== */
+
+function processLiveTick(tick) {
+
+  if (tick.symbol && tick.symbol !== currentMarket) return;
+
+  if (typeof tick.pip_size === "number") {
+    pipSize = tick.pip_size;
+  }
+
+  latestQuote = tick.quote;
+
+  const digit = extractLastDigit(tick.quote, pipSize);
+
+  if (digit === null) return;
+
+  latestDigit = digit;
+
+  if (trackingEnabled) {
+    ticks.push(digit);
+
+    if (ticks.length > MAX_HISTORY) {
+      ticks.shift();
+    }
+
+    updateDigitGrid();
+  }
+
+  updatePriceDisplay();
+
+  $("tickStatus").textContent =
+    trackingEnabled
+      ? `${ticks.length} ticks collected | Receiving live updates`
+      : "Tracking paused | Live price still updating";
+}
+
+/* =====================================
+   PRICE DISPLAY
+===================================== */
+
+function updatePriceDisplay() {
+  if (latestQuote === null) return;
+
+  $("spotPrice").textContent =
+    Number(latestQuote).toFixed(pipSize);
+
+  $("lastDigit").textContent =
+    latestDigit === null ? "-" : latestDigit;
+}
+
+/* =====================================
+   GET SELECTED SAMPLE
+===================================== */
+
+function getSample() {
+  const count = Number($("sampleSelect").value);
+
+  return ticks.slice(-count);
+}
+
+/* =====================================
+   DIGIT FREQUENCY CALCULATION
+===================================== */
+
+function calculateStatistics(sample) {
+
+  const counts = Array(10).fill(0);
+
+  sample.forEach(digit => {
+    if (digit >= 0 && digit <= 9) {
+      counts[digit]++;
+    }
+  });
+
+  const total = sample.length;
+
+  const percentages = counts.map(count =>
+    total ? (count / total) * 100 : 0
+  );
+
+  const evenCount =
+    counts[0] + counts[2] + counts[4] +
+    counts[6] + counts[8];
+
+  const oddCount =
+    counts[1] + counts[3] + counts[5] +
+    counts[7] + counts[9];
+
+  const underCount =
+    counts[0] + counts[1] + counts[2] +
+    counts[3] + counts[4];
+
+  const overCount =
+    counts[5] + counts[6] + counts[7] +
+    counts[8] + counts[9];
+
+  return {
+    counts,
+    percentages,
+    total,
+    evenPct: total ? evenCount / total * 100 : 0,
+    oddPct: total ? oddCount / total * 100 : 0,
+    underPct: total ? underCount / total * 100 : 0,
+    overPct: total ? overCount / total * 100 : 0
+  };
+}
+
+/* =====================================
+   DIGIT GRID UPDATE
+===================================== */
+
+function updateDigitGrid() {
+
+  const sample = getSample();
+  const stats = calculateStatistics(sample);
+
+  const percentages = stats.percentages;
+
+  let max = Math.max(...percentages);
+  let min = Math.min(...percentages);
+
+  for (let i = 0; i <= 9; i++) {
+
+    const cell = $(`digit-${i}`);
+
+    cell.classList.remove("highest", "lowest");
+
+    $(`percent-${i}`).textContent =
+      percentages[i].toFixed(2) + "%";
+
+    if (sample.length && percentages[i] === max) {
+      cell.classList.add("highest");
+    }
+
+    if (sample.length && percentages[i] === min) {
+      cell.classList.add("lowest");
+    }
+  }
+
+  $("gridStatus").textContent =
+    `${sample.length} / ${$("sampleSelect").value} selected ticks | ` +
+    `Red = Highest appearance | Green = Lowest appearance`;
+}
+
+/* =====================================
+   ANALYSIS MODE SELECTION
+===================================== */
+
+document.querySelectorAll(".tab").forEach(tab => {
+
+  tab.addEventListener("click", () => {
+
+    document.querySelectorAll(".tab").forEach(t =>
+      t.classList.remove("active")
+    );
+
+    tab.classList.add("active");
+
+    currentMode = tab.dataset.mode;
+
+    invalidateAnalysis();
+  });
+});
+
+/* =====================================
+   INVALIDATE OLD RESULTS
+===================================== */
+
+function invalidateAnalysis() {
+
+  analysisGeneration++;
+
+  analysisRunning = false;
+
+  $("ringWrap").style.display = "none";
+  $("analysisResult").style.display = "none";
+
+  $("analyzeBtn").disabled = false;
+  $("analyzeBtn").textContent = "Start Analysis";
+}
+
+/* =====================================
+   ANALYSIS ENGINE
+===================================== */
+
+function runAnalysis() {
+
+  if (analysisRunning) return;
+
+  if (!trackingEnabled) {
+    alert("Turn Volatility Tracking ON before analysis.");
+    return;
+  }
+
+  const sample = getSample();
+
+  if (sample.length < 10) {
+    alert("Not enough tick data. Wait for more live ticks.");
+    return;
+  }
+
+  analysisRunning = true;
+
+  const generation = ++analysisGeneration;
+
+  const stats = calculateStatistics(sample);
+
+  const last = sample[sample.length - 1];
+
+  $("analysisResult").style.display = "none";
+  $("ringWrap").style.display = "flex";
+
+  $("analyzeBtn").disabled = true;
+  $("analyzeBtn").textContent = "Analyzing...";
+
+  let start = null;
+
+  const duration = 1500;
+
+  function animate(timestamp) {
+
+    if (generation !== analysisGeneration) return;
+
+    if (!start) start = timestamp;
+
+    const elapsed = timestamp - start;
+
+    const progress = Math.min(elapsed / duration, 1);
+
+    const percentage = Math.round(progress * 100);
+
+    $("progressText").textContent =
+      percentage + "%";
+
+    $("progressRing").style.background =
+      `conic-gradient(var(--blue) ${percentage * 3.6}deg, #e5eaf2 0deg)`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      completeAnalysis(stats, last, generation);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+/* =====================================
+   GENERATE RECOMMENDATION
+===================================== */
+
+function calculatePrediction(stats, lastDigit) {
+
+  let prediction = "";
+  let confidence = 0;
+  let explanation = "";
+
+  // MATCHES / DIFFERS
+  if (currentMode === "differs") {
+
+    const eligible = [];
+
+    for (let i = 0; i <= 9; i++) {
+
+      if (i !== lastDigit) {
+        eligible.push({
+          digit:i,
+          pct:stats.percentages[i]
+        });
+      }
+    }
+
+    eligible.sort((a,b) => a.pct - b.pct);
+
+    const selected = eligible[0];
+
+    prediction = `DIFFERS ${selected.digit}`;
+
+    confidence = Math.min(
+      94,
+      Math.round(
+        74 + Math.max(0, 10 - selected.pct) * 2.2
+      )
+    );
+
+    explanation =
+      `The immediate last digit was ${lastDigit}, so it was excluded. ` +
+      `Digit ${selected.digit} has the lowest appearance frequency among ` +
+      `the nine eligible digits at ${selected.pct.toFixed(2)}%. ` +
+      `The selected digit appeared ${stats.counts[selected.digit]} times ` +
+      `in the ${stats.total}-tick sample.`;
+  }
+
+  // EVEN / ODD
+  else if (currentMode === "evenodd") {
+
+    const recommendEven =
+      stats.evenPct <= stats.oddPct;
+
+    prediction = recommendEven ? "EVEN" : "ODD";
+
+    confidence = Math.min(
+      91,
+      Math.round(
+        68 + Math.abs(stats.evenPct - 50) * 1.4
+      )
+    );
+
+    explanation =
+      `Even digits appeared ${stats.evenPct.toFixed(2)}% of the time, ` +
+      `while odd digits appeared ${stats.oddPct.toFixed(2)}%. ` +
+      `The lower-frequency side is ${prediction}. ` +
+      `This recommendation uses a mean-reversion heuristic.`;
+  }
+
+  // OVER / UNDER
+  else if (currentMode === "overunder") {
+
+    const recommendUnder =
+      stats.underPct <= stats.overPct;
+
+    prediction = recommendUnder ? "UNDER 5" : "OVER 4";
+
+    confidence = Math.min(
+      90,
+      Math.round(
+        68 + Math.abs(stats.underPct - 50) * 1.4
+      )
+    );
+
+    explanation =
+      `Digits 0–4 appeared ${stats.underPct.toFixed(2)}% of the time. ` +
+      `Digits 5–9 appeared ${stats.overPct.toFixed(2)}%. ` +
+      `The lower-frequency group is ${prediction}. ` +
+      `The recommendation is based on the observed sample distribution.`;
+  }
+
+  return {
+    prediction,
+    confidence,
+    explanation
+  };
+}
+
+/* =====================================
+   COMPLETE ANALYSIS
+===================================== */
+
+function completeAnalysis(stats, lastDigit, generation) {
+
+  if (generation !== analysisGeneration) return;
+
+  const result = calculatePrediction(stats, lastDigit);
+
+  $("prediction").textContent = result.prediction;
+
+  $("confidence").textContent =
+    result.confidence + "%";
+
+  $("confidenceBar").style.width =
+    result.confidence + "%";
+
+  $("explanation").textContent =
+    result.explanation;
+
+  $("ringWrap").style.display = "none";
+
+  $("analysisResult").style.display = "block";
+
+  $("analyzeBtn").disabled = false;
+
+  $("analyzeBtn").textContent = "Analyze Again";
+
+  analysisRunning = false;
+
+  if (result.confidence >= 80 && soundEnabled) {
+    playAlert();
+  }
+}
+
+/* =====================================
+   SOUND ALERT
+===================================== */
+
+function playAlert() {
+
+  try {
+
+    const AudioContextClass =
+      window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    if (!audioContext) {
+      audioContext = new AudioContextClass();
+    }
+
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const oscillator = audioContext.createOscillator();
+
+    const gain = audioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.setValueAtTime(
+      880,
+      audioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+      0.15,
+      audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioContext.currentTime + 0.35
+    );
+
+    oscillator.start();
+
+    oscillator.stop(audioContext.currentTime + 0.35);
+
+  } catch (error) {
+    console.warn("Audio alert unavailable:", error);
+  }
+}
+
+/* =====================================
+   ANALYSIS BUTTON
+===================================== */
+
+$("analyzeBtn").addEventListener("click", runAnalysis);
+
+/* =====================================
+   SAMPLE WINDOW CHANGE
+===================================== */
+
+$("sampleSelect").addEventListener("change", () => {
+  updateDigitGrid();
+  invalidateAnalysis();
+});
+
+/* =====================================
+   MARKET SWITCHING
+===================================== */
+
+$("marketSelect").addEventListener("change", () => {
+
+  const newMarket = $("marketSelect").value;
+
+  if (newMarket === currentMarket) return;
+
+  currentMarket = newMarket;
+
+  ticks = [];
+  latestQuote = null;
+  latestDigit = null;
+  pipSize = 2;
+
+  $("spotPrice").textContent = "---";
+  $("lastDigit").textContent = "-";
+
+  $("tickStatus").textContent =
+    "Switching market and loading history...";
+
+  invalidateAnalysis();
+
+  updateDigitGrid();
+
+  if (socket && socket.readyState === WebSocket.OPEN) {
+
+    // Forget existing tick subscriptions before switching.
+    socket.send(JSON.stringify({
+      forget_all: "ticks"
+    }));
+
+    requestMarketHistory();
+
+  } else {
+
+    connect();
+  }
+});
+
+/* =====================================
+   TRACKING SWITCH CHANGE
+===================================== */
+
+$("trackingSwitch").addEventListener("change", () => {
+
+  setTrackingUI();
+
+  if (trackingEnabled) {
+    $("tickStatus").textContent =
+      "Tracking resumed. New ticks are being collected.";
+  } else {
+    $("tickStatus").textContent =
+      "Tracking paused. Live spot price remains active.";
+  }
+
+  invalidateAnalysis();
+});
+
+/* =====================================
+   SOUND SWITCH CHANGE
+===================================== */
+
+$("soundSwitch").addEventListener("change", setSoundUI);
+
+/* =====================================
+   START APPLICATION
+===================================== */
+
+window.addEventListener("online", () => {
+  if (!socket || socket.readyState === WebSocket.CLOSED) {
+    connect();
+  }
+});
+
+window.addEventListener("offline", () => {
+  setConnectionStatus(false, "Offline");
+});
+
+window.addEventListener("beforeunload", () => {
+
+  manuallyClosed = true;
+
+  clearTimeout(reconnectTimer);
+  clearInterval(pingTimer);
+
+  if (socket && socket.readyState === WebSocket.OPEN) {
+
+    socket.send(JSON.stringify({
+      forget_all: "ticks"
+    }));
+
+    socket.close();
+  }
+});
+
+// Initial connection
+connect();
+
+</script>
+</body>
+</html>
